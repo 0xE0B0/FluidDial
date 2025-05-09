@@ -60,25 +60,53 @@ bool touchIsCenter() {
 
 void dispatch_button(bool pressed, int button) {
     switch (button) {
-        case 0:
+        case Scene::ButtonIndex::RedButton:
             if (pressed) {
                 current_scene->onRedButtonPress();
             } else {
                 current_scene->onRedButtonRelease();
             }
             break;
-        case 1:
+        case Scene::ButtonIndex::DialButton:
             if (pressed) {
                 current_scene->onDialButtonPress();
             } else {
                 current_scene->onDialButtonRelease();
             }
             break;
-        case 2:
+        case Scene::ButtonIndex::GreenButton:
             if (pressed) {
                 current_scene->onGreenButtonPress();
             } else {
                 current_scene->onGreenButtonRelease();
+            }
+            break;
+        case Scene::ButtonIndex::XButton:
+            if (pressed) {
+                current_scene->onXButtonPress();
+            } else {
+                current_scene->onXButtonRelease();
+            }
+            break;
+        case Scene::ButtonIndex::YButton:
+            if (pressed) {
+                current_scene->onYButtonPress();
+            } else {
+                current_scene->onYButtonRelease();
+            }
+            break;
+        case Scene::ButtonIndex::ZButton:
+            if (pressed) {
+                current_scene->onZButtonPress();
+            } else {
+                current_scene->onZButtonRelease();
+            }
+            break;
+        case Scene::ButtonIndex::OptButton:
+            if (pressed) {
+                current_scene->onOptButtonLongPress();
+            } else {
+                current_scene->onOptButtonRelease();
             }
             break;
         default:

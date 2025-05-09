@@ -33,12 +33,35 @@ public:
 
     const char* name() { return _name; }
 
+    enum ButtonIndex : uint8_t {
+        RedButton   = 0,
+        DialButton  = 1,
+        GreenButton = 2,
+        XButton     = 3,
+        YButton     = 4,
+        ZButton     = 5,
+        OptButton   = 6,
+        LockOut     = 7,
+    };
+
     virtual void onRedButtonPress() {}
     virtual void onRedButtonRelease() {}
     virtual void onGreenButtonPress() {}
     virtual void onGreenButtonRelease() {}
-    virtual void onDialButtonPress() {}
+    virtual void onDialButtonPress() {}  // aka encoder or center button
     virtual void onDialButtonRelease() {}
+    virtual void onXButtonPress() {}
+    virtual void onXButtonLongPress() {}
+    virtual void onXButtonRelease() {}
+    virtual void onYButtonPress() {}
+    virtual void onYButtonLongPress() {}
+    virtual void onYButtonRelease() {}
+    virtual void onZButtonPress() {}
+    virtual void onZButtonLongPress() {}
+    virtual void onZButtonRelease() {}
+    virtual void onOptButtonPress() {}
+    virtual void onOptButtonLongPress() {}
+    virtual void onOptButtonRelease() {}
     virtual void onTouchPress() {}
     virtual void onTouchRelease() {}
     virtual void onTouchClick() {}

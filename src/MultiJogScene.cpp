@@ -88,6 +88,7 @@ public:
         }
         refreshDisplay();
     }
+
     void zero_axes() {
         std::string cmd = "G10L20P0";
         for (int axis = 0; axis < num_axes; axis++) {
@@ -98,6 +99,14 @@ public:
         }
         send_line(cmd.c_str());
     }
+
+    void zero_axis(int axis) {
+        std::string cmd = "G10L20P0";
+        cmd += axisNumToChar(axis);
+        cmd += "0";
+        send_line(cmd.c_str());
+    }
+
     void onEntry(void* arg) {
         if (arg && strcmp((const char*)arg, "Confirmed") == 0) {
             zero_axes();

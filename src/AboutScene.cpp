@@ -31,7 +31,7 @@ void AboutScene::onGreenButtonPress() {
 void AboutScene::onRedButtonPress() {
     set_disconnected_state();
 #ifdef ARDUINO
-    centered_text("Use red button to wakeup", 118, RED, TINY);
+    centered_text("Use red button to wakeup", 118+40, RED, TINY);
     refreshDisplay();
     delay_ms(2000);
 
@@ -72,7 +72,7 @@ void AboutScene::reDisplay() {
     const int y_spacing = 20;
     int       y         = 80;
 
-    std::string version_str = "Ver ";
+    std::string version_str = "Ver: ";
     version_str += git_info;
     centered_text(version_str.c_str(), y, LIGHTGREY, TINY);
     refreshDisplay();
@@ -82,9 +82,19 @@ void AboutScene::reDisplay() {
     text(intToCStr(FNC_BAUD), val_x, y, GREEN, TINY, bottom_left);
 #endif
 
-#ifndef DEBUG_TO_USB  // backlight shares a pin with this.
+#ifndef DEBUG_TO_USB  // backlight shares a pin with this
     text("Brightness:", key_x, y += y_spacing, LIGHTGREY, TINY, bottom_right);
     text(intToCStr(_brightness), val_x, y, GREEN, TINY, bottom_left);
+#endif
+
+#ifdef I2C_BUTTONS
+    #include "Hardware2432.hpp"
+
+    if (!i2c_expander_connected()) {
+        text("PCF8574 not detected", 20, y += y_spacing, RED, TINY, bottom_left);
+        text("I2C addr:", key_x, y += y_spacing, LIGHTGREY, TINY, bottom_right);
+        text(intToCStr(I2C_BUTTONS_ADDR), val_x, y, GREEN, TINY, bottom_left);
+    }
 #endif
 
     if (wifi_ssid.length()) {
@@ -110,8 +120,6 @@ void AboutScene::reDisplay() {
 #else
     const char* greenLegend = "";
 #endif
-
-    //drawOptionButton("Tool Menu", enable_tool_menu, 40, 135, 160);
 
     drawMenuTitle(current_scene->name());
 

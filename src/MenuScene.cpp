@@ -120,6 +120,23 @@ public:
         }
         reDisplay();
     }
+
+#ifdef I2C_BUTTONS
+    // x/y/z buttons enter jog scene
+    void onXButtonPressed() {      
+        if (state == Idle)
+            push_scene(&jogScene);
+    }
+    void onYButtonPressed() {      
+        if (state == Idle)
+            push_scene(&jogScene);
+    }
+    void onZButtonPressed() {      
+        if (state == Idle)
+            push_scene(&jogScene);
+    }
+#endif
+
 } menuScene;
 
 Scene* initMenus() {
