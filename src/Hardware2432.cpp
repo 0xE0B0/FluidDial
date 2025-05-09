@@ -14,7 +14,7 @@
 #include <driver/uart.h>
 #include "hal/uart_hal.h"
 
-#if I2C_BUTTONS
+#ifdef I2C_BUTTONS
 #include <Wire.h>
 #include <PCF8574.h>
 #endif
@@ -150,6 +150,10 @@ void init_hardware() {
 
     touch.begin(&display);
 
+    // buzzer pin initialization
+    ledcSetup(BUZZER_CHANNEL, 2000, 8); // 2kHz, 8-bit resolution
+    ledcAttachPin(BUZZER_PIN, BUZZER_CHANNEL);
+
     int enc_a = -1, enc_b = -1;
     red_button_pin   = -1;
     dial_button_pin  = -1;
@@ -160,10 +164,10 @@ void init_hardware() {
     opt_button_pin   = -1;
 
     lgfx::boards::board_t board_id = display.getBoard();
-    Serial.printf("Board id %d\n", board_id);
+    Serial.printf("Board id %d\r\n", board_id);
     switch (board_id) {
         case lgfx::boards::board_Guition_ESP32_2432W328:
-            Serial.println("Guition board 2432W328 detected");
+            Serial.println("Guition 2432W328 board detected");
 #ifdef LOCKOUT_PIN
             pinMode(LOCKOUT_PIN, INPUT);
 #endif
@@ -187,21 +191,23 @@ void init_hardware() {
             // backlight = GPIO_NUM_27;
             break;
         case lgfx::boards::board_Sunton_ESP32_2432S028:
-            Serial.println("Sunton board 2432S028 detected");
+            Serial.println("Sunton 2432S028 board detected");
             enc_a = GPIO_NUM_22;
             enc_b = GPIO_NUM_27;
             break;
         default:
-            Serial.printf("Unknown board id %d\n", board_id);
+            Serial.printf("Unknown board id %d\r\n", board_id);
             break;
     }
 
     #ifdef I2C_BUTTONS
     Wire.begin(I2C_BUTTONS_SDA, I2C_BUTTONS_SCL);
     if (!i2cExpander.begin()) {
-        Serial.printf("I2C PCF8574 not found at address 0x%02X\n", I2C_BUTTONS_ADDR);
+        Serial.printf("I2C PCF8574 not found at address 0x%02X\r\n", I2C_BUTTONS_ADDR);
         pcf8574_connected = false;
     }
+    enc_a = ENC_A_PIN;
+    enc_b = ENC_B_PIN;
     #endif
 
     #ifdef CUSTOM_BUTTONS
@@ -216,15 +222,23 @@ void init_hardware() {
     z_button_pin     = Z_BUTTON_PIN;
     opt_button_pin   = OPT_BUTTON_PIN;
     lockout_pin      = LOCKOUT_PIN;
-    pinMode(red_button_pin, INPUT_PULLUP);
-    pinMode(dial_button_pin, INPUT_PULLUP);
-    pinMode(green_button_pin, INPUT_PULLUP);
-    pinMode(x_button_pin, INPUT_PULLUP);
-    pinMode(y_button_pin, INPUT_PULLUP);
-    pinMode(z_button_pin, INPUT_PULLUP);
-    pinMode(opt_button_pin, INPUT_PULLUP);
-    pinMode(LOCKOUT_PIN, INPUT_PULLUP);
-    Serial.printf("Custom buttons:\n-red: %d-dial: %d\n-green: %d\n-x: %d\n-y: %d\n-z: %d\n-opt: %d\n, lockout: %d\n",
+    if (red_button_pin != -1)
+        pinMode(red_button_pin, INPUT_PULLUP);
+    if (dial_button_pin != -1)
+        pinMode(dial_button_pin, INPUT_PULLUP);
+    if (green_button_pin != -1)
+        pinMode(green_button_pin, INPUT_PULLUP);
+    if (x_button_pin != -1)
+        pinMode(x_button_pin, INPUT_PULLUP);
+    if (y_button_pin != -1)
+        pinMode(y_button_pin, INPUT_PULLUP);
+    if (z_button_pin != -1)
+        pinMode(z_button_pin, INPUT_PULLUP);
+    if (opt_button_pin != -1)
+        pinMode(opt_button_pin, INPUT_PULLUP);
+    if (lockout_pin != -1)
+        pinMode(lockout_pin, INPUT_PULLUP);
+    Serial.printf("Custom buttons:\r\n-red: %d-dial: %d\r\n-green: %d\r\n-x: %d\r\n-y: %d\r\n-z: %d\r\n-opt: %d\r\n, lockout: %d\r\n",
         red_button_pin, dial_button_pin, green_button_pin, x_button_pin, y_button_pin, z_button_pin, opt_button_pin, lockout_pin);
     #endif
 
@@ -253,7 +267,7 @@ static uint8_t readPhysicalButtons() {
         state |= digitalRead(opt_button_pin) << Scene::ButtonIndex::OptButton;
     if (lockout_pin != -1)
         state |= digitalRead(lockout_pin) << Scene::ButtonIndex::LockOut;
-    return state;
+    return ~state;  // low active
 }
 #endif
 
@@ -346,13 +360,13 @@ bool switch_button_touched(bool& pressed, int& button) {
 #if defined(I2C_BUTTONS) || defined(CUSTOM_BUTTONS)
     for (int i = 0; i < 8; ++i) {
         if (physicalButtons.getKeyPress(1 << i)) {
-            Serial.printf("Button %d pressed\n", i + 1);
+            Serial.printf("Button %d pressed\r\n", i + 1);
             button  = i + 1;
             pressed = true;
             return true;
         }
         if (physicalButtons.getKeyRelease(1 << i)) {
-            Serial.printf("Button %d released\n", i + 1);
+            Serial.printf("Button %d released\r\n", i + 1);
             button  = i + 1;
             pressed = false;
             return true;
@@ -467,7 +481,7 @@ void update_events() {
     // read button states in one milli sec interval from I2C expander or gpio to debounce them
     if (ms != last_ms) {
         last_ms = ms;
-        uint8_t buttonState = 0;
+        uint8_t buttonState = 0xff;
         #ifdef I2C_BUTTONS
             if (i2c_expander_connected())
                 buttonState = i2cExpander.read8();
@@ -479,6 +493,10 @@ void update_events() {
     }
 }
 
-void ackBeep() {}
+void ackBeep() {
+    ledcWriteTone(BUZZER_CHANNEL, 1800);
+    delay(50);
+    noTone(BUZZER_CHANNEL);
+}
 
 void deep_sleep(int us) {}
