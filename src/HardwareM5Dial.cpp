@@ -68,7 +68,8 @@ void system_background() {
     canvas.fillSprite(TFT_BLACK);
 }
 
-bool switch_button_touched(bool& pressed, int& button) {
+bool switch_button_touched(bool& pressed, bool& hold, int& button) {
+    hold = false;
     if (redButton.wasPressed()) {
         button  = 0;
         pressed = true;

@@ -66,7 +66,7 @@ void system_background();
 
 bool screen_encoder(int x, int y, int& delta);
 bool screen_button_touched(bool pressed, int x, int y, int& button);
-bool switch_button_touched(bool& pressed, int& button);
+bool switch_button_touched(bool& pressed, bool& hold, int& button);
 
 void deep_sleep(int us);
 

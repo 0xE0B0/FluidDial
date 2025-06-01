@@ -45,22 +45,25 @@ public:
     };
 
     virtual void onRedButtonPress() {}
+    virtual void onRedButtonHold() {}
     virtual void onRedButtonRelease() {}
     virtual void onGreenButtonPress() {}
+    virtual void onGreenButtonHold() {}
     virtual void onGreenButtonRelease() {}
     virtual void onDialButtonPress() {}  // aka encoder or center button
+    virtual void onDialButtonHold() {}
     virtual void onDialButtonRelease() {}
     virtual void onXButtonPress() {}
-    virtual void onXButtonLongPress() {}
+    virtual void onXButtonHold() {}
     virtual void onXButtonRelease() {}
     virtual void onYButtonPress() {}
-    virtual void onYButtonLongPress() {}
+    virtual void onYButtonHold() {}
     virtual void onYButtonRelease() {}
     virtual void onZButtonPress() {}
-    virtual void onZButtonLongPress() {}
+    virtual void onZButtonHold() {}
     virtual void onZButtonRelease() {}
     virtual void onOptButtonPress() {}
-    virtual void onOptButtonLongPress() {}
+    virtual void onOptButtonHold() {}
     virtual void onOptButtonRelease() {}
     virtual void onTouchPress() {}
     virtual void onTouchRelease() {}

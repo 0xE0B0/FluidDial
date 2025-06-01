@@ -58,53 +58,60 @@ bool touchIsCenter() {
     return (ctr.x * ctr.x + ctr.y * ctr.y) < (center_radius * center_radius);
 }
 
-void dispatch_button(bool pressed, int button) {
+void dispatch_button(bool pressed, bool hold, int button) {
     switch (button) {
         case Scene::ButtonIndex::RedButton:
             if (pressed) {
-                current_scene->onRedButtonPress();
+                if (hold) current_scene->onRedButtonHold();
+                else current_scene->onRedButtonPress();
             } else {
                 current_scene->onRedButtonRelease();
             }
             break;
         case Scene::ButtonIndex::DialButton:
             if (pressed) {
-                current_scene->onDialButtonPress();
+                if (hold) current_scene->onDialButtonHold();
+                else current_scene->onDialButtonPress();
             } else {
                 current_scene->onDialButtonRelease();
             }
             break;
         case Scene::ButtonIndex::GreenButton:
             if (pressed) {
-                current_scene->onGreenButtonPress();
+                if (hold) current_scene->onGreenButtonHold();
+                else current_scene->onGreenButtonPress();
             } else {
                 current_scene->onGreenButtonRelease();
             }
             break;
         case Scene::ButtonIndex::XButton:
             if (pressed) {
-                current_scene->onXButtonPress();
+                if (hold) current_scene->onXButtonHold();
+                else current_scene->onXButtonPress();
             } else {
                 current_scene->onXButtonRelease();
             }
             break;
         case Scene::ButtonIndex::YButton:
             if (pressed) {
-                current_scene->onYButtonPress();
+                if (hold) current_scene->onYButtonHold();
+                else current_scene->onYButtonPress();
             } else {
                 current_scene->onYButtonRelease();
             }
             break;
         case Scene::ButtonIndex::ZButton:
             if (pressed) {
-                current_scene->onZButtonPress();
+                if (hold) current_scene->onZButtonHold();
+                else current_scene->onZButtonPress();
             } else {
                 current_scene->onZButtonRelease();
             }
             break;
         case Scene::ButtonIndex::OptButton:
             if (pressed) {
-                current_scene->onOptButtonLongPress();
+                if (hold) current_scene->onOptButtonHold();
+                else current_scene->onOptButtonPress();
             } else {
                 current_scene->onOptButtonRelease();
             }
@@ -129,9 +136,9 @@ void dispatch_touch() {
         int button;
         if (screen_button_touched(t.state == m5::touch_state_t::touch, t.x, t.y, button)) {
             if (t.state == m5::touch_state_t::touch) {
-                dispatch_button(true, button);
+                dispatch_button(true, false, button);
             } else if (t.state == m5::touch_state_t::none) {
-                dispatch_button(false, button);
+                dispatch_button(false, false, button);
             }
             return;
         }
@@ -179,9 +186,8 @@ void schedule_action(ActionHandler _action) {
 }
 
 void dispatch_events() {
+    update_events();
     if (!ui_locked()) {
-        update_events();
-
         static int16_t oldEncoder   = 0;
         int16_t        newEncoder   = get_encoder();
         int16_t        encoderDelta = newEncoder - oldEncoder;
@@ -194,10 +200,10 @@ void dispatch_events() {
             }
         }
 
-        bool pressed;
+        bool pressed, hold;
         int  button;
-        if (switch_button_touched(pressed, button)) {
-            dispatch_button(pressed, button);
+        if (switch_button_touched(pressed, hold, button)) {
+            dispatch_button(pressed, hold, button);
         }
 
         dispatch_touch();

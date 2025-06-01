@@ -21,9 +21,9 @@ constexpr static const int FNC_UART_NUM      = 0;
 #endif
 
 #ifdef I2C_BUTTONS
-constexpr static const int I2C_BUTTONS_ADDR = 0x20;
-constexpr static const int I2C_BUTTONS_SDA  = GPIO_NUM_16;  // SDA
-constexpr static const int I2C_BUTTONS_SCL  = GPIO_NUM_17;  // SCL
+constexpr static const int I2C_BUTTONS_ADDR = 0x27;  // 0x27: A0: H, A1: H, A2: H
+constexpr static const int I2C_BUTTONS_SDA  = GPIO_NUM_27;  // SDA
+constexpr static const int I2C_BUTTONS_SCL  = GPIO_NUM_22;  // SCL
 
 bool i2c_expander_connected();
 #endif

@@ -364,7 +364,8 @@ bool screen_button_touched(bool pressed, int x, int y, int& button) {
     return true;
 }
 
-bool switch_button_touched(bool& pressed, int& button) {
+bool switch_button_touched(bool& pressed, bool& hold, int& button) {
+    hold = false;
     if (redButton.wasPressed()) {
         button  = 0;
         pressed = true;
