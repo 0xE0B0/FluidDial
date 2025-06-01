@@ -1,6 +1,7 @@
 prefs
 .pio
 .vscode
-src/version.cpp
+src/version.*
 *~
 junk
+release
